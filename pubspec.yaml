@@ -1,0 +1,27 @@
+name: iphoto
+description: "iPhto"
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.3.1 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  logger: ^2.0.2+1
+  http: ^1.2.1
+  path_provider: ^2.1.2
+  path: ^1.9.0
+  photo_view: ^0.15.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
