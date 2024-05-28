@@ -1,0 +1,215 @@
+openapi: 3.0.3
+info:
+  title: EvilTransmission - OpenAPI 3.0
+  version: 0.1beta
+servers:
+  - url: http://localhost:30556/
+tags:
+  - name: Resource
+    description: Get, upload resources
+  - name: Security
+    description: Get key
+paths:
+  /res:
+    get:
+      summary: Get media info
+      tags:
+        - Resource
+      description: |
+        Get list of media info in JSON format.
+      parameters:
+        - name: res_type
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: quantity
+          required: true
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully retrieve the list media info.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaInfo"
+    post:
+      summary: Upload resource
+      tags:
+        - Resource
+      description: |
+        Upload single resources.
+      parameters:
+        - name: res_type
+          in: query
+          required: false
+          description: Resource type
+          schema:
+            $ref: "#/components/schemas/MediaType"
+      requestBody:
+        required: true
+        content:
+          image/png:
+            schema:
+              type: string
+              format: binary
+          image/jpeg:
+            schema:
+              type: string
+              format: binary
+          application/mp4:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: Dataset
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListFiles"
+  /res/{res_id}:
+    get:
+      summary: Get specific resource by ID
+      tags:
+        - Resource
+      description: |
+        Get resource by resource ID (rid).
+      parameters:
+        - name: res_id
+          required: true
+          in: path
+          description: Resource ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully retrieve resource
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            application/mp4:
+              schema:
+                type: string
+                format: binary
+
+  /encryption:
+    get:
+      summary: Get AES key in binary data
+      tags:
+        - Encryption
+      description: |
+        Get AES key
+      parameters:
+        - name: key
+          required: true
+          in: header
+          description: RSA Client public key
+          schema:
+            type: string
+            format: binary
+      responses:
+        "200":
+          description: AES key in binary data encrypted with RSA public key
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
+        "500":
+          $ref: "#/components/responses/InternalErrResponse"
+components:
+  responses:
+    ## Sucesses
+    UploadCompleteResponse:
+      description: Resources upload complete
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ResponseMessage"
+    ## Errors
+    NotFoundResponse:
+      description: The specified resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ResponseMessage"
+    UnauthorizedResponse:
+      description: Not allowed to access.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ResponseMessage"
+    InternalErrResponse:
+      description: Internal error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ResponseMessage"
+  schemas:
+    ResponseMessage:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: the code of response.
+        message:
+          type: string
+          description: the description of the code.
+    MediaInfo:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+          res_type:
+            type: string
+          thumbnail:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+        example:
+          id: 19
+          name: bravallog.mp4
+          res_type: video
+          thumbnail:
+            id: 1
+            name: barvb.png
+    MediaType:
+      type: string
+      nullable: true
+      enum:
+        - image
+        - video
+      default: image
+      description: The media type of resource
+    File:
+      type: object
+      properties:
+        filename:
+          type: array
+          items:
+            type: string
+            format: binary
+    ListFiles:
+      type: array
+      items:
+        $ref: "#/components/schemas/File"
