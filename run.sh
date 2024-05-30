@@ -1,2 +1,3 @@
 export $(cat .env | xargs)
-fastapi run main.py --port 30556
+# pipenv shell
+pipenv run fastapi run main.py

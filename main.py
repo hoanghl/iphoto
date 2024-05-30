@@ -1,7 +1,12 @@
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src import routes
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARN)
 
 app = FastAPI()
 

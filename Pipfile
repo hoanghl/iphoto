@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 fastapi = "0.111.0"
 uvicorn = "0.29.0"
-psycopg = "3.1.19"
+psycopg = {extras = ["pool", "binary"], version = "*"}
 loguru = "*"
 
 [dev-packages]

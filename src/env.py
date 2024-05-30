@@ -2,14 +2,14 @@ import os
 
 from loguru import logger
 
-USER = os.getenv("USER", None)
-PWD = os.getenv("PASSWORD", None)
-HOST = os.getenv("HOST", None)
-PORT = os.getenv("PORT", None)
-DBNAME = os.getenv("DBNAME", None)
-TBLNAME = os.getenv("TBLNAME", None)
+USER = os.getenv("DB_INFO_USER", None)
+PWD = os.getenv("DB_INFO_PWD", None)
+HOST = os.getenv("DB_INFO_HOST", None)
+PORT = os.getenv("DB_INFO_PORT", None)
+DBNAME = os.getenv("DB_INFO_DB", None)
+TBLNAME = os.getenv("DB_INFO_TBLNAME", None)
 
-PATH_DIR_RES = os.getenv("PATH_DIR_RES", None)
+PATH_DIR_RES = os.getenv("DB_FILE_DIR", None)
 
 env_vars = {
     "USER": USER,

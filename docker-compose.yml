@@ -1,0 +1,45 @@
+services:
+  backend:
+    container_name: backend
+    image: backend:1.0
+    build:
+      dockerfile: ./dockers/be.Dockerfile
+    restart: always
+    ports:
+      - "${PORT_BE}:8000"
+    volumes:
+      - ./:/code
+    networks:
+      - iphoto
+    depends_on:
+      - db_info
+    entrypoint: [ "bash", "run.sh" ]
+    # entrypoint: [ "tail", "-f", "/dev/null" ]
+
+  db_info:
+    container_name: db_info
+    image: pgvector/pgvector:pg16
+    # restart: always
+    volumes:
+      - "./${DB_INFO_DATA_DIR}:/var/lib/postgresql/data"
+      - ./dockers/db_info_init.sql:/docker-entrypoint-initdb.d/init.sql
+    # ports:
+    #   - "${DB_INFO_PORT}:5432"
+    environment:
+      - POSTGRES_DB=${DB_INFO_DB}
+      - POSTGRES_USER=${DB_INFO_USER}
+      - POSTGRES_PASSWORD=${DB_INFO_PWD}
+    networks:
+      - iphoto
+  # redis:
+  #   container_name: redis
+  #   image: redis:latest
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - iphoto
+
+networks:
+  iphoto:
+    name: iphoto
+    driver: bridge
