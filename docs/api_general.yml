@@ -41,13 +41,6 @@ paths:
         - Resource
       description: |
         Upload single resources.
-      parameters:
-        - name: res_type
-          in: query
-          required: false
-          description: Resource type
-          schema:
-            $ref: "#/components/schemas/MediaType"
       requestBody:
         required: true
         content:
@@ -65,11 +58,7 @@ paths:
               format: binary
       responses:
         "200":
-          description: Dataset
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ListFiles"
+          description: Successfully upload
   /res/{res_id}:
     get:
       summary: Get specific resource by ID
