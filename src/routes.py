@@ -33,7 +33,7 @@ async def get_res_list_info(res_type: str, quantity: int):
         return out
     except HTTPException as e:
         logger.error(traceback.format_exc())
-        return e
+        raise e
     except Exception:
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500)
@@ -60,7 +60,7 @@ async def get_res_info(res_id: str):
         return Response(content=out, media_type=media_type)
     except HTTPException as e:
         logger.error(traceback.format_exc())
-        return e
+        raise e
     except Exception:
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500)
@@ -68,8 +68,6 @@ async def get_res_info(res_id: str):
 
 @router.post("/res/")
 async def upload_res(upload_file: UploadFile):
-    # TODO: HoangLe [May-20]: Implement this
-
     try:
         # Resource checking
         if upload_file.content_type is None:
@@ -94,7 +92,7 @@ async def upload_res(upload_file: UploadFile):
 
     except HTTPException as e:
         logger.error(traceback.format_exc())
-        return e
+        raise e
     except Exception:
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500)
