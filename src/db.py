@@ -1,3 +1,5 @@
+from datetime import datetime as dt
+
 import psycopg as pg
 from loguru import logger
 from psycopg import sql
@@ -154,3 +156,31 @@ def get_res_info(res_id: str, **kwargs) -> dict | None:
         "res_type": result[0],
         "res_name": result[1],
     }
+
+
+@connect
+def upload_res_info(res_type: str, filename: str, **kwargs):
+    """Upload resource's metadata
+
+    Args:
+        res_type (str): resource type
+        filename (str): filename
+    """
+    assert env.TBLNAME
+
+    cur = kwargs["cur"]
+    conn = kwargs["conn"]
+
+    values = [(res_type, filename, None, dt.now())]
+
+    stmt = sql.SQL("""
+        insert into {table} 
+        (res_type, file_name, thumbnail_name, last_update) 
+        values ({placeholders})
+        ;
+    """).format(
+        table=sql.Identifier(env.TBLNAME),
+        placeholders=sql.SQL(", ").join(sql.Placeholder() * len(values[0])),
+    )
+    cur.executemany(stmt, values)
+    conn.commit()

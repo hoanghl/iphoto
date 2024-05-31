@@ -1,7 +1,7 @@
 import random
 import traceback
 
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Response, UploadFile
 from loguru import logger
 
 from src import db, resource
@@ -66,7 +66,35 @@ async def get_res_info(res_id: str):
         raise HTTPException(status_code=500)
 
 
-@router.post("/res")
-async def upload_res():
+@router.post("/res/")
+async def upload_res(upload_file: UploadFile):
     # TODO: HoangLe [May-20]: Implement this
-    pass
+
+    try:
+        # Resource checking
+        if upload_file.content_type is None:
+            raise HTTPException(status_code=400, detail="content-type not available")
+
+        if upload_file.content_type.startswith("image"):
+            res_type = "image"
+        elif upload_file.content_type.startswith("video"):
+            res_type = "video"
+        else:
+            raise HTTPException(400, "Invalid content_type")
+
+        if upload_file.filename is None:
+            raise HTTPException(400, "Invalid file name")
+
+        # Upload metadata
+        db.upload_res_info(res_type, upload_file.filename)
+
+        # Store to disk
+        contents = upload_file.file.read()
+        resource.store_resource(upload_file.filename, res_type, contents)
+
+    except HTTPException as e:
+        logger.error(traceback.format_exc())
+        return e
+    except Exception:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500)
