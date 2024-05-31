@@ -1,13 +1,11 @@
 from pathlib import Path
 
-from loguru import logger
-
 from src import env
 
 VALID_RES_TYPES = ["image", "video", "thumbnail"]
 
 
-def _gen_path(res_name: str, res_type: str) -> Path | None:
+def _gen_path(res_name: str, res_type: str) -> Path:
     """Generate resource path from resource name and type
 
     Args:
@@ -21,7 +19,7 @@ def _gen_path(res_name: str, res_type: str) -> Path | None:
 
     path = Path(env.PATH_DIR_RES) / res_type / res_name
     if not path.exists():
-        return None
+        raise AssertionError(f"Invalid path_res: {path}")
 
     return path
 
@@ -36,11 +34,9 @@ def get_resource(res_name: str, res_type: str) -> bytes | None:
     Returns:
         bytes|None: data if path exists, None otherwise
     """
-    assert res_type in VALID_RES_TYPES, logger.error(f"Invalid res_type: {res_type}")
+    assert res_type in VALID_RES_TYPES, "Invalid res_type: {res_type}"
 
     path_res = _gen_path(res_name, res_type)
-    if path_res is None:
-        return None
 
     with open(path_res, "rb") as f:
         resource = f.read()
