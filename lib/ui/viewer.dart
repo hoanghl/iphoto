@@ -1,5 +1,4 @@
 import 'dart:core';
-import 'dart:io';
 
 import 'package:iphoto/data/media.dart';
 import 'package:iphoto/ui/media_viewer.dart';
