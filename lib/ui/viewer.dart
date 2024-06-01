@@ -14,7 +14,7 @@ class Viewer extends StatefulWidget {
 
 class _ViewerState extends State<Viewer> {
   final List<String> tabsName = ["Image", "Video"];
-  Future<Map<MediaType, List<String>>>? resources;
+  Future<Map<ResourceType, List<String>>>? resources;
 
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _ViewerState extends State<Viewer> {
     super.initState();
   }
 
-  Widget getGridView(MediaType mediaType) {
+  Widget getGridView(ResourceType mediaType) {
     return FutureBuilder(
       future: resources,
       builder: (context, snapshot) => snapshot.hasData
@@ -31,7 +31,7 @@ class _ViewerState extends State<Viewer> {
               crossAxisCount: 2,
               children: snapshot.data![mediaType]!
                   .map((e) =>
-                      MediaViewer(mediaType: MediaType.image, mediaPath: e))
+                      MediaViewer(mediaType: ResourceType.image, mediaPath: e))
                   .toList(),
             )
           : const SizedBox(
@@ -75,8 +75,8 @@ class _ViewerState extends State<Viewer> {
           padding: const EdgeInsets.all(10),
           child: TabBarView(
             children: [
-              getGridView(MediaType.image),
-              getGridView(MediaType.thumbnail),
+              getGridView(ResourceType.image),
+              getGridView(ResourceType.thumbnail),
               // GridView.count(
               //   crossAxisCount: 2,
               //   children: imagePaths!

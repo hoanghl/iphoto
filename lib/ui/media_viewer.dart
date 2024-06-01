@@ -5,7 +5,7 @@ import 'package:iphoto/utils.dart';
 import 'package:flutter/material.dart';
 
 class MediaViewer extends StatefulWidget {
-  final MediaType mediaType;
+  final ResourceType mediaType;
   final String mediaPath;
 
   const MediaViewer(

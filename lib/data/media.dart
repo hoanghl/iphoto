@@ -1,7 +1,7 @@
 import 'package:iphoto/data/protocol.dart';
 import 'package:iphoto/utils.dart';
 
-Future<Map<MediaType, List<String>>> getResources() async {
+Future<Map<ResourceType, List<String>>> getResources() async {
   // Get resource info
   List resInfo = await getResInfo();
 
@@ -12,17 +12,17 @@ Future<Map<MediaType, List<String>>> getResources() async {
     return getRes(
       record['id'],
       record['name'],
-      MediaType.values.byName(record['res_type']),
+      ResourceType.values.byName(record['res_type']),
     );
   }));
 
   List<PathResource> pathRes = await list.wait;
 
   // Establish map of media type
-  Map<MediaType, List<String>> resMap = {
-    MediaType.image: [],
-    MediaType.video: [],
-    MediaType.thumbnail: [],
+  Map<ResourceType, List<String>> resMap = {
+    ResourceType.image: [],
+    ResourceType.video: [],
+    ResourceType.thumbnail: [],
   };
   for (final r in pathRes) {
     logger.i("Path to resource: ${r.resPath}");

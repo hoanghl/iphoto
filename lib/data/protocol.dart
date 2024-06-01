@@ -4,6 +4,8 @@ import 'dart:typed_data';
 
 import 'package:iphoto/utils.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
@@ -16,7 +18,7 @@ Future<List> getResInfo() async {
     host: host,
     port: port,
     path: "res/",
-    queryParameters: {'res_type': 'image', 'quantity': '3'},
+    queryParameters: {'res_type': 'image', 'quantity': '4'},
   );
   logger.i("Sent GET to ${uri.toString()}");
   var resp = await http.get(uri);
@@ -29,7 +31,7 @@ Future<List> getResInfo() async {
 Future<PathResource> getRes(
   int resId,
   String resName,
-  MediaType resType,
+  ResourceType resType,
 ) async {
   var uri = Uri(scheme: "http", host: host, port: port, path: "res/$resId/");
   var resp = await http.get(uri);
@@ -54,35 +56,22 @@ Future<PathResource> getRes(
   return PathResource(resType: resType, resPath: path);
 }
 
-void sendData(Uint8List data) async {
-  // connect to the socket server
-  final socket = await Socket.connect(host, port);
-  print('Connected to: ${socket.remoteAddress.address}:${socket.remotePort}');
+Future sendResource(String path) async {
+  var uri = Uri(scheme: "http", host: host, port: port, path: "res/");
+  var request = http.MultipartRequest('POST', uri);
 
-  // listen for responses from the server
-  socket.listen(
-    // handle data from the server
-    (Uint8List data) {
-      final serverResponse = String.fromCharCodes(data);
-      print('Server: $serverResponse');
-    },
+  String mime = lookupMimeType(path)!;
 
-    // handle errors
-    onError: (error) {
-      print(error);
-      socket.destroy();
-    },
-
-    // handle server ending connection
-    onDone: () {
-      print('Server left.');
-      socket.destroy();
-    },
+  request.files.add(
+    await http.MultipartFile.fromPath(
+      "upload_file",
+      path,
+      contentType: MediaType(mime.split('/')[0], mime.split('/')[1]),
+    ),
   );
 
-  socket.add(data);
-
-  await socket.close();
+  return request.send();
+  // print("Status code: ${response.statusCode}");
 }
 
 void readData(Socket socket, path) async {

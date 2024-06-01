@@ -1,9 +1,9 @@
 import 'package:logger/logger.dart';
 
-enum MediaType { video, image, thumbnail }
+enum ResourceType { video, image, thumbnail }
 
 class PathResource {
-  MediaType resType;
+  ResourceType resType;
   String resPath;
 
   PathResource({
